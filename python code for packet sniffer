@@ -1,0 +1,33 @@
+from scapy.all import sniff
+
+# Define the packet callback function
+def packet_callback(packet):
+    print(f"\n[+] New Packet Captured:")
+    # Check if packet has IP layer
+    if packet.haslayer("IP"):
+        print(f"Source IP: {packet["IP"].src}")
+        print(f"Destination IP: {packet["IP"].dst}")
+        print(f"Protocol: {packet["IP"].proto}")
+        
+        # If the packet has a TCP layer
+        if packet.haslayer("TCP"):
+            print(f"Source Port: {packet["TCP"].sport}")
+            print(f"Destination Port: {packet["TCP"].dport}")
+        
+        # If the packet has UDP layer
+        elif packet.haslayer("UDP"):
+            print(f"Source Port: {packet["UDP"].sport}")
+            print(f"Destination Port: {packet["UDP"].dport}")
+        
+        # Display raw data (payload) of the packet
+        print(f"Payload (Raw Data): {packet.summary()}")
+
+# Start sniffing on the network interface
+def start_sniffing(interface="eth0"):
+    print(f"[*] Sniffing on {interface}...")
+    sniff(iface=interface, prn=packet_callback, store=False)
+
+# Main function to start the sniffer
+if __name__ == "__main__":
+    # Replace "eth0" with the appropriate network interface name for your system
+    start_sniffing("eth0")  # For example, eth0 for Ethernet or wlan0 for Wi-Fi on Linux
